@@ -14,6 +14,6 @@ image_id=str(image_id)
 image_id="".join(image_id.split())
 #print image_id
 comm="nova boot --flavor="+str(flavor_id)+" --image="+str(image_id)+" "+name
-print comm
+#print comm
 os.system(comm)
 
