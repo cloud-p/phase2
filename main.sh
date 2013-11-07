@@ -1,21 +1,21 @@
 #!/bin/bash
-##fjfj
 hadoop_download="http://apache.claz.org/hadoop/common/hadoop-1.2.1/hadoop-1.2.1.tar.gz"
-wget $hadoop_download
-chmod a+x hadoop_install.sh
-chmod a+x ssh-id-copy.sh
-./hadoop_install.sh $1
-identity_file=$1
+#wget $hadoop_download
 properties_file=$1
 user="root"
-slaves=`cat $properties_file | grep -i tasktracker | cut -f 2`
+slaves=`cat $properties_file | tail -n 3`
+master=`cat $properties_file | head -n 1`
 echo "slaves" $slaves
+echo "slaves" $master
 if [ ! -e ~/.ssh/id_rsa ]
 then
-         ssh-keygen -f ~/.ssh/id_rsa -P ""
+ssh-keygen -f ~/.ssh/id_rsa -P ""
 fi
 for slave in $slaves
 do
-        scp -i $identity_file -o StrictHostKeyChecking=no ~/.ssh/id_rsa.pub $user@$slave:
-        ssh -i $identity_file -o StrictHostkeyChecking=no $user@$slave "cat id_rsa.pub >> ~/.ssh/authorized_keys"
+echo "ssh-copy-id -i $HOME/.ssh/id_rsa.pub $user@$slave"
+ssh-copy-id -i $HOME/.ssh/id_rsa.pub $user@$slave
 done
+ssh-copy-id -i $HOME/.ssh/id_rsa.pub $user@$master
+chmod a+x hadoop.sh
+./hadoop.sh $1
