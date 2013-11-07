@@ -1,4 +1,5 @@
 #!/bin/bash
+##fjfj
 hadoop_download="http://apache.claz.org/hadoop/common/hadoop-1.2.1/hadoop-1.2.1.tar.gz"
 wget $hadoop_download
 chmod a+x hadoop_install.sh
