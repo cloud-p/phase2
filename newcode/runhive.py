@@ -1,3 +1,4 @@
+import os
 import sys 
 hqlfile=sys.argv[1]
 inputdir=sys.argv[2]

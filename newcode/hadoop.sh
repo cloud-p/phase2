@@ -38,7 +38,8 @@ function configure(){
         sudo mkdir -p $HADOOP_TEMP
         cd $HADOOP_DIR/conf/
         echo $MASTER_URI > masters
-        echo "$SLAVES_URI" > slaves
+        echo $SLAVES_URI > slaves
+        echo $MASTER_URI >> slaves
         echo "export JAVA_HOME=$JAVA_HOME" >> hadoop-env.sh
         echo -e "<?xml version=\"1.0\"?><?xml-stylesheet type=\"text/xsl\" href=\"configuration.xsl\"?><configuration><property><name>hadoop.tmp.dir</name><value>$HADOOP_TEMP</value><description>A base for other temporary directories.</description></property><property><name>fs.default.name</name><value>hdfs://$MASTER_URI:54310</value><description>The name of the default file system. A URI whosescheme and authority determine the FileSystem implementation. Theuri's scheme determines the config property (fs.SCHEME.impl) namingthe FileSystem implementation class. The uri's authority is used todetermine the host, port, etc. for a filesystem.</description></property></configuration>" > core-site.xml
 	echo -e "<?xml version=\"1.0\"?><?xml-stylesheet type=\"text/xsl\" href=\"configuration.xsl\"?><configuration><property><name>dfs.replication</name><value>$DFS_REPLICATION</value><description>Default block replication.The actual number of replications can be specified when the file is created.The default is used if replication is not specified in create time.</description></property></configuration>" > hdfs-site.xml
@@ -58,7 +59,7 @@ echo "Copying to $srv...";
 function verifyJPS(){
         echo "-----------Verfing hadoop daemons-------------"
         for srv in $1; do
-echoi "Running jps on $srv.........";
+echo "Running jps on $srv.........";
         # ssh $srv "ps aux | grep -v grep | grep java"
          ssh $srv "jps"
         done
@@ -95,7 +96,7 @@ ssh $MASTER_URI "echo 'export JAVA_HOME=/usr/lib/jvm/java-6-openjdk-i386' >>  ~/
 ssh $MASTER_URI "echo 'export PATH=$PATH:$HADOOP_HOME/bin' >>  ~/.bashrc"
 ssh $MASTER_URI "source ~/.bashrc"
 
-ssh $MASTER_URI "start-all.sh"
+#ssh $MASTER_URI "start-all.sh"
 
 echo -a "<?xml version="1.0"?><?xml-stylesheet type="text/xsl" href="configuration.xsl"?><configuration><property><name>mapred.job.tracker</name><value>$MASTER_URI:54311</value></property></configuration>" > /usr/local/hive/src/conf/hive-site.xml
 
