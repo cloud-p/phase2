@@ -68,6 +68,9 @@ echo "Running jps on $srv.........";
 sudo rm -rf $HADOOP_DIR
 tar xzf $hadoop_tar -C $INSTALL_DIR
 sudo mv $INSTALL_DIR/hadoop-* $HADOOP_DIR
+ssh $MASTER_URI "echo 'net.ipv6.conf.all.disable_ipv6 = 1' >> /etc/sysctl.conf"
+ssh $MASTER_URI "echo 'net.ipv6.conf.default.disable_ipv6 = 1' >> /etc/sysctl.conf"
+ssh $MASTER_URI "echo 'net.ipv6.conf.lo.disable_ipv6 = 1' >> /etc/sysctl.conf"
 configure 
 copyToSlaves 
 echo "-----------starting hadoop cluster-------------"
@@ -75,6 +78,8 @@ if [ $NN_FORMAT -eq 1 ] ;then
 echo "Formatting the NameNode........"
         ssh $MASTER_URI "$HADOOP_DIR/bin/hadoop namenode -format"
 fi
+
+
 ssh $MASTER_URI "$HADOOP_DIR/bin/start-dfs.sh"
 ssh $MASTER_URI "$HADOOP_DIR/bin/start-mapred.sh"
 
@@ -100,11 +105,15 @@ ssh $MASTER_URI "source ~/.bashrc"
 
 echo -a "<?xml version="1.0"?><?xml-stylesheet type="text/xsl" href="configuration.xsl"?><configuration><property><name>mapred.job.tracker</name><value>$MASTER_URI:54311</value></property></configuration>" > /usr/local/hive/src/conf/hive-site.xml
 
-ssh $MASTER_URI "$HADOOP_HOME/bin/hadoop fs -mkdir       /tmp"
-ssh $MASTER_URI "$HADOOP_HOME/bin/hadoop fs -mkdir       /user/hive/warehouse"
-ssh $MASTER_URI "$HADOOP_HOME/bin/hadoop fs -chmod 777   /tmp"
-ssh $MASTER_URI "$HADOOP_HOME/bin/hadoop fs -chmod 777   /user/hive/warehouse"
+ssh $MASTER_URI "/usr/local/hadoop/bin/hadoop dfs -mkdir  /user"
+ssh $MASTER_URI "/usr/local/hadoop/bin/hadoop dfs -mkdir  /user/root"
+ssh $MASTER_URI "/usr/local/hadoop/bin/hadoop dfs -mkdir  /tmp"
+ssh $MASTER_URI "/usr/local/hadoop/bin/hadoop dfs -mkdir  /user/hive"
+ssh $MASTER_URI "/usr/local/hadoop/bin/hadoop dfs -mkdir  /user/hive/warehouse"
+ssh $MASTER_URI "/usr/local/hadoop/bin/hadoop dfs -chmod 777   /tmp"
+ssh $MASTER_URI "/usr/local/hadoop/bin/hadoop dfs -chmod 777   /user/hive/warehouse"
 ssh $MASTER_URI "source ~/.bashrc"
+
 verifyJPS $MASTER_URI
 verifyJPS $SLAVES_URI
 echo "done"

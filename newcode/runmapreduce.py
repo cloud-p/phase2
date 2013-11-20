@@ -8,7 +8,7 @@ inputpath=sys.argv[5]
 comm="/usr/local/hadoop/bin/hadoop dfs -copyFromLocal "+inputfile+" /user/root/"
 print comm
 os.system(comm)
-#os.system("/usr/local/hadoop/bin/hadoop dfs -rmr /user/root/out2")
+os.system("/usr/local/hadoop/bin/hadoop dfs -rmr /user/root/out2")
 comm="/usr/local/hadoop/bin/hadoop jar "+ jarfile +" "+ classtobeused + " /user/root/"+inputpath+" /user/root/out2"
 print comm
 os.system(comm)
